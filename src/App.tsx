@@ -1,11 +1,8 @@
 import React from 'react'
+import AppRoutes from './Routes'
 
 function App() {
-    return (
-        <div>
-            <h1>Carona</h1>
-        </div>
-    )
+    return <AppRoutes />
 }
 
 export default App
