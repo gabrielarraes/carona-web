@@ -1,14 +1,19 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 
 import { ForgotPassword, Home, Login, PageNotFound, RecoverPassword, Register } from './pages'
 import { AppLayout, SecurityLayout } from './layouts'
+import { AuthContext } from './contexts'
+import { Preloader } from './components'
 
 const PrivateOutlet: FC = ({ children }: any) => {
-    // const user = { id: 1 }
-    const user = null
+    const { isAuthenticated, isLoading } = useContext(AuthContext)
 
-    return user ? (
+    if (isLoading) {
+        return <Preloader />
+    }
+
+    return isAuthenticated ? (
         <>
             {children}
             <Outlet />
@@ -19,10 +24,13 @@ const PrivateOutlet: FC = ({ children }: any) => {
 }
 
 const PublicOutlet: FC = ({ children }: any) => {
-    // const user = { id: 1 }
-    const user = null
+    const { isAuthenticated, isLoading } = useContext(AuthContext)
 
-    return !user ? (
+    if (isLoading) {
+        return <Preloader />
+    }
+
+    return !isAuthenticated ? (
         <>
             {children}
             <Outlet />

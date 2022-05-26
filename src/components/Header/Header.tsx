@@ -1,24 +1,23 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 
+import { AuthContext } from '../../contexts'
+
 const Header = () => {
+    const { handleLogout, user } = useContext(AuthContext)
+
     return (
         <nav className="main-header navbar navbar-expand navbar-white navbar-light">
             <ul className="navbar-nav">
                 <li className="nav-item">
-                    <a className="nav-link" data-widget="pushmenu" href="#" role="button">
+                    <Link className="nav-link" data-widget="pushmenu" to="#" role="button">
                         <i className="fas fa-bars"></i>
-                    </a>
+                    </Link>
                 </li>
                 <li className="nav-item d-none d-sm-inline-block">
-                    <a href="../../index3.html" className="nav-link">
+                    <Link to={'/'} className="nav-link">
                         Home
-                    </a>
-                </li>
-                <li className="nav-item d-none d-sm-inline-block">
-                    <a href="#" className="nav-link">
-                        Contact
-                    </a>
+                    </Link>
                 </li>
             </ul>
 
@@ -157,7 +156,7 @@ const Header = () => {
                         <img width={30} src="../../dist/img/user1-128x128.jpg" className="img-circle elevation-2" alt="Profil" />
                     </Link>
                     <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span className="dropdown-item dropdown-header text-muted">USERNAME</span>
+                        <span className="dropdown-item dropdown-header text-muted">{user?.username.toUpperCase()}</span>
                         <div className="dropdown-divider"></div>
                         {/*
                         <a href="/" className="dropdown-item">
@@ -173,12 +172,12 @@ const Header = () => {
                             <i className="fas fa-key mr-2"></i> Change password
                         </Link>
                         <div className="dropdown-divider"></div>
-                        <Link to="#" className="dropdown-item" id="js-logout-button">
+                        <Link to="#" className="dropdown-item" id="js-logout-button" onClick={handleLogout}>
                             <i className="fas fa-unlock-alt mr-2"></i> Logout
                         </Link>
 
                         <div className="dropdown-divider"></div>
-                        <span className="dropdown-item dropdown-footer text-muted">ROLE_USER</span>
+                        <span className="dropdown-item dropdown-footer text-muted">{user?.roles[0].replace(/_/g, ' ')}</span>
                     </div>
                 </li>
             </ul>

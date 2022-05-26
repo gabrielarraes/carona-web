@@ -1,31 +1,71 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as Yup from 'yup'
+
 import { useTitle } from '../../../hooks'
-import { Link } from 'react-router-dom'
+import { TextInput } from '../../../components'
+import { AuthContext } from '../../../contexts'
+
+type LoginType = {
+    email: string
+    password: string
+}
+
+const loginSchema = Yup.object({
+    email: Yup.string().trim().min(6).required(),
+    password: Yup.string().min(6).required()
+}).required()
 
 const Login = () => {
     useTitle('Login | Carona App')
+    const navigate = useNavigate()
+    const [hasLoggingError, setHasLoggingError] = useState<boolean>(false)
+    const { handleLogin } = useContext(AuthContext)
+
+    const {
+        register,
+        handleSubmit,
+        formState: { isSubmitting, errors }
+    } = useForm<LoginType>({
+        mode: 'onTouched',
+        resolver: yupResolver(loginSchema)
+    })
+
+    const onSubmit = async ({ email, password }: LoginType) => {
+        const isLogged = await handleLogin(email, password)
+
+        isLogged ? navigate('/') : setHasLoggingError(true)
+    }
 
     return (
         <>
+            {hasLoggingError && (
+                <div className="w-100 p-1 mr-auto ml-auto">
+                    <div className="alert alert-danger alert-dismissible fade show">
+                        <h5>
+                            <i className="icon fas fa-ban"></i> Error!
+                        </h5>
+                        <p>Invalid credentials</p>
+                        <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={() => setHasLoggingError(false)}>
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <p className="login-box-msg">Sign in to start your session</p>
 
-            <form action="#" method="post">
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="input-group mb-3">
-                    <input type="email" className="form-control" placeholder="Email" />
-                    <div className="input-group-append">
-                        <div className="input-group-text">
-                            <span className="fas fa-envelope"></span>
-                        </div>
-                    </div>
+                    <TextInput name={'email'} type={'text'} placeholder={'Email or Username'} icon={'fas fa-envelope'} register={register} error={errors.email && errors.email.message} />
                 </div>
+
                 <div className="input-group mb-3">
-                    <input type="password" className="form-control" placeholder="Password" />
-                    <div className="input-group-append">
-                        <div className="input-group-text">
-                            <span className="fas fa-lock"></span>
-                        </div>
-                    </div>
+                    <TextInput name={'password'} type={'password'} placeholder={'Password'} icon={'fas fa-lock'} register={register} error={errors.password && errors.password.message} />
                 </div>
+
                 <div className="row">
                     <div className="col-8">
                         <div className="icheck-primary">
@@ -34,28 +74,20 @@ const Login = () => {
                         </div>
                     </div>
                     <div className="col-4">
-                        <button type="submit" className="btn btn-primary btn-block">
+                        <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-block">
+                            {isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}
                             Sign In
                         </button>
                     </div>
                 </div>
             </form>
 
-            <div className="social-auth-links text-center mt-2 mb-3">
-                {/*                <a href="#" className="btn btn-block btn-primary">
-                    <i className="fab fa-facebook mr-2"></i> Sign in using Facebook
-                </a>
-                <a href="#" className="btn btn-block btn-danger">
-                    <i className="fab fa-google-plus mr-2"></i> Sign in using Google+
-                </a>*/}
-            </div>
-
-            <p className="mb-1">
+            <p className="mt-5 mb-1">
                 <Link to={'/auth/forgot-password'}>I forgot my password</Link>
             </p>
             <p className="mb-0">
                 <Link to={'/auth/register'} className="text-center">
-                    Register a new membership
+                    Register
                 </Link>
             </p>
         </>
