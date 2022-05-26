@@ -10,7 +10,7 @@ const PasswordRecoveredSuccessfully = () => {
         <>
             <div className="text-center">
                 <p>Your password has been reset successfully.</p>
-                <div className="row">
+                <div className="row mt-3">
                     <div className="col-12">
                         <Link to={'/auth/login'} className="btn btn-primary btn-block">
                             Login

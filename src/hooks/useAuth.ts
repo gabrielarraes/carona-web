@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { User } from '../types'
+
+import { RegisterType, User } from '../types'
 import { Api } from '../services'
 
 export function useAuth() {
@@ -27,8 +28,9 @@ export function useAuth() {
                 return response
             })
             .catch((err) => {
-                return err
+                return err.response.data
             })
+
         const { data, status } = result
 
         if (status !== undefined && status === 200) {
@@ -41,33 +43,48 @@ export function useAuth() {
             return true
         }
 
-        return false
+        return result
     }
 
     const handleForgotPassword = async (email: string, resetUrl: string) => {
-        const result = await Api.post('/users/forgot-password', { email }, { params: { resetUrl } })
-            .then((response) => {
-                return response
+        return await Api.post('/users/forgot-password', { email }, { params: { resetUrl } })
+            .then((_) => {
+                return true
             })
             .catch((err) => {
-                return err
+                return err.response.data
             })
-        const { status } = result
-
-        return status !== undefined && status === 200
     }
 
     const handleRecoverPassword = async (newPassword: string, token: string, loginUrl: string) => {
-        const result = await Api.post('/users/reset-password', { newPassword }, { params: { token, loginUrl } })
-            .then((response) => {
-                return response
+        return await Api.post('/users/reset-password', { newPassword }, { params: { token, loginUrl } })
+            .then((_) => {
+                return true
             })
             .catch((err) => {
-                return err
+                return err.response.data
             })
-        const { status } = result
+    }
 
-        return status !== undefined && status === 200
+    const handleRegister = async (registerType: RegisterType, loginUrl: string) => {
+        const customer = {
+            user: {
+                username: registerType.username,
+                email: registerType.email,
+                password: registerType.password
+            },
+            cpf: registerType.cpf,
+            firstName: registerType.firstName,
+            lastName: registerType.lastName,
+            phoneNumber: registerType.phoneNumber
+        }
+        return await Api.post('/customers', customer, { params: { loginUrl } })
+            .then((_) => {
+                return true
+            })
+            .catch((err) => {
+                return err.response.data
+            })
     }
 
     const handleLogout = () => {
@@ -77,5 +94,5 @@ export function useAuth() {
         setUser(null)
     }
 
-    return { isAuthenticated, isLoading, user, handleLogin, handleLogout, handleForgotPassword, handleRecoverPassword }
+    return { isAuthenticated, isLoading, user, handleLogin, handleLogout, handleForgotPassword, handleRecoverPassword, handleRegister }
 }

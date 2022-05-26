@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { AuthContext } from '../../contexts'
 
 const Sidebar = () => {
-    const { handleLogout, user } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
 
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4">

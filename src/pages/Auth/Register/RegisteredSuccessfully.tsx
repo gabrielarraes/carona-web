@@ -3,16 +3,13 @@ import { Link } from 'react-router-dom'
 
 import { useTitle } from '../../../hooks'
 
-const ForgotPasswordRequestedSuccessfully = () => {
-    useTitle('Forgot password requested successfully | Carona App')
+const RegisteredSuccessfully = () => {
+    useTitle('Registered successfully | Carona App')
     return (
         <>
             <div className="text-center">
-                <p>An email has been sent that contains a link that you can click to reset your password. This link will expire in 12 hour(s).</p>
-                <p>
-                    If you don't receive an email please check your spam folder or <Link to="/auth/forgot-password">try again</Link>.
-                </p>
-
+                <p>Your account has been created successfully. Please check your email to confirm. This link will expire in 12 hour(s).</p>
+                <p>If you already confirm your email, your can log in.</p>
                 <div className="row mt-3">
                     <div className="col-12">
                         <Link to={'/auth/login'} className="btn btn-primary btn-block">
@@ -25,4 +22,4 @@ const ForgotPasswordRequestedSuccessfully = () => {
     )
 }
 
-export default ForgotPasswordRequestedSuccessfully
+export default RegisteredSuccessfully

@@ -7,6 +7,7 @@ import * as Yup from 'yup'
 import { useTitle } from '../../../hooks'
 import { TextInput } from '../../../components'
 import { AuthContext } from '../../../contexts'
+import { ApiErrorType } from '../../../types'
 
 type LoginType = {
     email: string
@@ -21,7 +22,7 @@ const loginSchema = Yup.object({
 const Login = () => {
     useTitle('Login | Carona App')
     const navigate = useNavigate()
-    const [hasLoggingError, setHasLoggingError] = useState<boolean>(false)
+    const [hasLoggingError, setHasLoggingError] = useState<boolean | string>(false)
     const { handleLogin } = useContext(AuthContext)
 
     const {
@@ -34,9 +35,14 @@ const Login = () => {
     })
 
     const onSubmit = async ({ email, password }: LoginType) => {
-        const isLogged = await handleLogin(email, password)
+        const result = (await handleLogin(email, password)) as ApiErrorType | boolean
 
-        isLogged ? navigate('/') : setHasLoggingError(true)
+        if (typeof result === 'object') {
+            const { message } = result
+            setHasLoggingError(message)
+        }
+
+        typeof result === 'boolean' && navigate('/')
     }
 
     return (
@@ -47,7 +53,7 @@ const Login = () => {
                         <h5>
                             <i className="icon fas fa-ban"></i> Error!
                         </h5>
-                        <p>Invalid credentials</p>
+                        <p>{hasLoggingError}</p>
                         <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={() => setHasLoggingError(false)}>
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -66,14 +72,8 @@ const Login = () => {
                     <TextInput name={'password'} type={'password'} placeholder={'Password'} icon={'fas fa-lock'} register={register} error={errors.password && errors.password.message} />
                 </div>
 
-                <div className="row">
-                    <div className="col-8">
-                        <div className="icheck-primary">
-                            <input type="checkbox" id="remember" />
-                            <label htmlFor="remember">Remember Me</label>
-                        </div>
-                    </div>
-                    <div className="col-4">
+                <div className="row mt-3">
+                    <div className="col-12">
                         <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-block">
                             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}
                             Sign In

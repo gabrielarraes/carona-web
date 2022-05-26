@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom'
 
 const SecurityLayout = () => {
     return (
-        <div className="login-page register-page">
+        <div className="login-page" style={{ minHeight: '120vh' }}>
             <div className="login-box">
                 <div className="card card-outline card-primary">
                     <div className="card-header text-center">

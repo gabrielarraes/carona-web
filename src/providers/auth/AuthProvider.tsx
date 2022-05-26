@@ -4,7 +4,7 @@ import { AuthContext } from '../../contexts'
 import { useAuth } from '../../hooks'
 
 const AuthProvider = ({ children }: { children: JSX.Element }) => {
-    const { isAuthenticated, isLoading, user, handleLogout, handleLogin, handleForgotPassword, handleRecoverPassword } = useAuth()
+    const { isAuthenticated, isLoading, user, handleLogout, handleLogin, handleForgotPassword, handleRecoverPassword, handleRegister } = useAuth()
 
     const value = {
         isAuthenticated,
@@ -13,7 +13,8 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         handleLogin,
         handleLogout,
         handleForgotPassword,
-        handleRecoverPassword
+        handleRecoverPassword,
+        handleRegister
     }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

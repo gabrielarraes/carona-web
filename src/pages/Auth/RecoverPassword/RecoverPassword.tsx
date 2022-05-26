@@ -14,13 +14,15 @@ function useQuery() {
     return React.useMemo(() => new URLSearchParams(search), [search])
 }
 
+const VALID_PASSWORD = new RegExp('^.*(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$&*+=%]).{8,25}.*$')
+
 type RecoverPasswordType = {
     newPassword: string
     passwordConfirmation: string
 }
 
 const recoverPasswordSchema = Yup.object({
-    newPassword: Yup.string().trim().required(),
+    newPassword: Yup.string().trim().min(8).matches(VALID_PASSWORD, 'The password must contain at least one lower case, one upper case, one number and one special character').required(),
     passwordConfirmation: Yup.string().oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
 }).required()
 
@@ -28,8 +30,8 @@ const RecoverPassword = () => {
     useTitle('Recover Password | Carona App')
     const navigate = useNavigate()
     const query = useQuery()
-    const [hasLoggingError, setHasLoggingError] = useState<boolean>(false)
-    const { handleRecoverPassword, handleLogout } = useContext(AuthContext)
+    const [hasLoggingError, setHasLoggingError] = useState<boolean | string>(false)
+    const { handleRecoverPassword } = useContext(AuthContext)
 
     const {
         register,
@@ -43,14 +45,14 @@ const RecoverPassword = () => {
     const onSubmit = async ({ newPassword }: RecoverPasswordType) => {
         const token = query.get('token') as string
         const loginUrl = window.location.origin + '/auth/login'
-        const isSent = await handleRecoverPassword(newPassword, token, loginUrl)
+        const result = await handleRecoverPassword(newPassword, token, loginUrl)
 
-        if (isSent) {
-            handleLogout()
-            navigate('/auth/login')
-        } else {
-            setHasLoggingError(true)
+        if (typeof result === 'object') {
+            const { message } = result
+            setHasLoggingError(message)
         }
+
+        typeof result === 'boolean' && navigate('/auth/password-recovered-successfully')
     }
 
     return (
@@ -61,7 +63,7 @@ const RecoverPassword = () => {
                         <h5>
                             <i className="icon fas fa-ban"></i> Error!
                         </h5>
-                        <p>An error occurred during the recover password</p>
+                        <p>{hasLoggingError}</p>
                         <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={() => setHasLoggingError(false)}>
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -84,7 +86,7 @@ const RecoverPassword = () => {
                         error={errors.passwordConfirmation && errors.passwordConfirmation.message}
                     />
                 </div>
-                <div className="row">
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-block">
                             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}

@@ -7,6 +7,7 @@ import * as Yup from 'yup'
 import { useTitle } from '../../../hooks'
 import { AuthContext } from '../../../contexts'
 import { TextInput } from '../../../components'
+import { ApiErrorType } from '../../../types'
 
 type ForgotPasswordType = {
     email: string
@@ -19,7 +20,7 @@ const forgotPasswordSchema = Yup.object({
 const ForgotPassword = () => {
     useTitle('Forgot Password | Carona App')
     const navigate = useNavigate()
-    const [hasLoggingError, setHasLoggingError] = useState<boolean>(false)
+    const [hasLoggingError, setHasLoggingError] = useState<boolean | string>(false)
     const { handleForgotPassword } = useContext(AuthContext)
 
     const {
@@ -33,9 +34,14 @@ const ForgotPassword = () => {
 
     const onSubmit = async ({ email }: ForgotPasswordType) => {
         const resetUrl = window.location.origin + '/auth/recover-password?token='
-        const isSent = await handleForgotPassword(email, resetUrl)
+        const result = (await handleForgotPassword(email, resetUrl)) as ApiErrorType | boolean
 
-        isSent ? navigate('/auth/forgot-password-requested-successfully') : setHasLoggingError(true)
+        if (typeof result === 'object') {
+            const { message } = result
+            setHasLoggingError(message)
+        }
+
+        typeof result === 'boolean' && navigate('/auth/forgot-password-requested-successfully')
     }
 
     return (
@@ -59,7 +65,7 @@ const ForgotPassword = () => {
                 <div className="input-group mb-3">
                     <TextInput name={'email'} type={'text'} placeholder={'example@domain.com'} icon={'fas fa-envelope'} register={register} error={errors.email && errors.email.message} />
                 </div>
-                <div className="row">
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-block">
                             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}

@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 
-import { ForgotPassword, ForgotPasswordRequestedSuccessfully, Home, Login, PageNotFound, PasswordRecoveredSuccessfully, RecoverPassword, Register } from './pages'
+import { ForgotPassword, ForgotPasswordRequestedSuccessfully, Home, Login, PageNotFound, PasswordRecoveredSuccessfully, RecoverPassword, Register, RegisteredSuccessfully } from './pages'
 import { AppLayout, SecurityLayout } from './layouts'
 import { AuthContext } from './contexts'
 import { Preloader } from './components'
@@ -54,6 +54,7 @@ const AppRoutes = () => {
                     <Route path={'/auth'} element={<SecurityLayout />}>
                         <Route path={'login'} element={<Login />} />
                         <Route path={'register'} element={<Register />} />
+                        <Route path={'registered-successfully'} element={<RegisteredSuccessfully />} />
                         <Route path={'forgot-password'} element={<ForgotPassword />} />
                         <Route path={'forgot-password-requested-successfully'} element={<ForgotPasswordRequestedSuccessfully />} />
                         <Route path={'password-recovered-successfully'} element={<PasswordRecoveredSuccessfully />} />
