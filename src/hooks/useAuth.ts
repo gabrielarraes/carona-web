@@ -44,6 +44,32 @@ export function useAuth() {
         return false
     }
 
+    const handleForgotPassword = async (email: string, resetUrl: string) => {
+        const result = await Api.post('/users/forgot-password', { email }, { params: { resetUrl } })
+            .then((response) => {
+                return response
+            })
+            .catch((err) => {
+                return err
+            })
+        const { status } = result
+
+        return status !== undefined && status === 200
+    }
+
+    const handleRecoverPassword = async (newPassword: string, token: string, loginUrl: string) => {
+        const result = await Api.post('/users/reset-password', { newPassword }, { params: { token, loginUrl } })
+            .then((response) => {
+                return response
+            })
+            .catch((err) => {
+                return err
+            })
+        const { status } = result
+
+        return status !== undefined && status === 200
+    }
+
     const handleLogout = () => {
         localStorage.removeItem(USER_KEY)
         Api.defaults.headers.common['Authorization'] = ''
@@ -51,5 +77,5 @@ export function useAuth() {
         setUser(null)
     }
 
-    return { isAuthenticated, isLoading, handleLogin, handleLogout, user }
+    return { isAuthenticated, isLoading, user, handleLogin, handleLogout, handleForgotPassword, handleRecoverPassword }
 }
