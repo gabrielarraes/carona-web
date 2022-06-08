@@ -1,1 +1,1 @@
-export { default as Api } from './Api'
+export { default as Api, ApiPrivate } from './Api'

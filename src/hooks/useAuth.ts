@@ -91,8 +91,8 @@ export function useAuth() {
         localStorage.removeItem(USER_KEY)
         Api.defaults.headers.common['Authorization'] = ''
         setIsAuthenticated(false)
-        setUser(null)
+        setUser({ accessToken: '', email: '', id: 0, refreshToken: '', roles: [], username: '' })
     }
 
-    return { isAuthenticated, isLoading, user, handleLogin, handleLogout, handleForgotPassword, handleRecoverPassword, handleRegister }
+    return { isAuthenticated, isLoading, user, setUser, handleLogin, handleLogout, handleForgotPassword, handleRecoverPassword, handleRegister }
 }

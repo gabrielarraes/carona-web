@@ -1,7 +1,20 @@
 import { FC, useContext } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 
-import { ForgotPassword, ForgotPasswordRequestedSuccessfully, Home, Login, PageNotFound, PasswordRecoveredSuccessfully, RecoverPassword, Register, RegisteredSuccessfully } from './pages'
+import {
+    CreateCar,
+    CreateRide,
+    ForgotPassword,
+    ForgotPasswordRequestedSuccessfully,
+    Home,
+    Login,
+    PageNotFound,
+    PasswordRecoveredSuccessfully,
+    RecoverPassword,
+    Register,
+    RegisteredSuccessfully,
+    RideDetails
+} from './pages'
 import { AppLayout, SecurityLayout } from './layouts'
 import { AuthContext } from './contexts'
 import { Preloader } from './components'
@@ -47,6 +60,14 @@ const AppRoutes = () => {
                 <Route path={'/'} element={<PrivateOutlet />}>
                     <Route path={'/'} element={<AppLayout />}>
                         <Route index element={<Home />} />
+                        <Route path={'cars'}>
+                            <Route path={'create'} element={<CreateCar />} />
+                        </Route>
+                        <Route path={'rides'}>
+                            <Route path={':rideId'} element={<RideDetails />} />
+                            <Route path={'create'} element={<CreateRide />} />
+                            <Route path={'edit/:rideId'} element={<CreateRide />} />
+                        </Route>
                     </Route>
                 </Route>
 

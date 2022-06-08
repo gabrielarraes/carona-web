@@ -1,3 +1,5 @@
 export { Login, Register, ForgotPassword, RecoverPassword, ForgotPasswordRequestedSuccessfully, PasswordRecoveredSuccessfully, RegisteredSuccessfully } from './Auth'
 export { PageNotFound } from './Errors'
 export { default as Home } from './Home'
+export { CreateCar } from './Cars'
+export { CreateRide, RideDetails } from './Rides'
