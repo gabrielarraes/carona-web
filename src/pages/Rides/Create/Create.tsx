@@ -15,13 +15,15 @@ type RideProgramType = {
     cityToId: number
     day: string
     departureTime: string
+    price: number
 }
 
 const rideProgramSchema = Yup.object({
     cityFromId: Yup.number().required(),
     cityToId: Yup.number().required(),
     day: Yup.string().required(),
-    departureTime: Yup.string().required()
+    departureTime: Yup.string().required(),
+    price: Yup.number().required()
 })
 
 const DAYS: SelectOptionType[] = [
@@ -310,7 +312,24 @@ const Create = () => {
                                     </div>
                                 </div>
                                 <div className="row">
-                                    <div className="col-md-8 my-3">
+                                    <div className="col-md-4">
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="departureTime">Price (R$)</label>
+                                            <TextInput
+                                                id="price"
+                                                name={'price'}
+                                                type={'number'}
+                                                placeholder={'Ex: 20'}
+                                                register={register}
+                                                // defaultValue={ridesProgram ? ridesProgram.price : '00'}
+                                                error={errors.price && errors.price.message}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row my-3">
+                                    <div className="col-md-4"></div>
+                                    <div className="col-md-8">
                                         <div className="row">
                                             <div className="col-md-6 my-2">
                                                 {isCreation ? (
@@ -360,10 +379,9 @@ const Create = () => {
                                             <tr>
                                                 <th style={{ width: '5%' }}>#</th>
                                                 <th style={{ width: '5%' }}>Status</th>
-                                                <th style={{ width: '20%' }}>From</th>
-                                                <th style={{ width: '20%' }}>To</th>
-                                                <th style={{ width: '10%' }}>Hour</th>
-                                                <th style={{ width: '15%' }}>Car</th>
+                                                <th style={{ width: '30%' }}>From - To</th>
+                                                <th style={{ width: '15%' }}>Hour</th>
+                                                <th style={{ width: '20%' }}>Car</th>
                                                 <th style={{ width: '20%' }}>Driver</th>
                                                 <th style={{ width: '5%' }}>Actions</th>
                                             </tr>
@@ -374,8 +392,13 @@ const Create = () => {
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
                                                         <td>{ride.isActive ? <span className="badge badge-success">Disponivel</span> : <span className="badge badge-success">Indisponivel</span>}</td>
-                                                        <td>{ride.cityFrom.name}</td>
-                                                        <td>{ride.cityTo.name}</td>
+                                                        <td>
+                                                            <span className="text-bold">
+                                                                {ride.cityFrom.name} - {ride.cityTo.name}
+                                                            </span>
+                                                            <br />
+                                                            {ride.price} R$
+                                                        </td>
                                                         <td>
                                                             <span className="text-bold">
                                                                 {ride.day} <br /> {ride.departureTime}
@@ -397,7 +420,7 @@ const Create = () => {
                                                                     <span className="sr-only">Toggle Dropdown</span>
                                                                 </button>
                                                                 <div className="dropdown-menu" role="menu">
-                                                                    <Link className="dropdown-item" to="#">
+                                                                    <Link className="dropdown-item" to={'/rides/' + ride.id}>
                                                                         Show
                                                                     </Link>
                                                                     <Link

@@ -13,6 +13,8 @@ import {
     RecoverPassword,
     Register,
     RegisteredSuccessfully,
+    Reservation,
+    ReservationDetails,
     RideDetails
 } from './pages'
 import { AppLayout, SecurityLayout } from './layouts'
@@ -67,6 +69,10 @@ const AppRoutes = () => {
                             <Route path={':rideId'} element={<RideDetails />} />
                             <Route path={'create'} element={<CreateRide />} />
                             <Route path={'edit/:rideId'} element={<CreateRide />} />
+                        </Route>
+                        <Route path={'reservations'}>
+                            <Route path={''} element={<Reservation />} />
+                            <Route path={':reservationId'} element={<ReservationDetails />} />
                         </Route>
                     </Route>
                 </Route>

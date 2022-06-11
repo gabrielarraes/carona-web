@@ -1,48 +1,74 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
-import { useApiPrivate, useTitle } from '../../../hooks'
-import { Ride } from '../../../types'
-import { PageNotFound } from '../../Errors'
-import { Preloader } from '../../../components'
+import { ReservationType } from '../../types'
+import { useApiPrivate, useTitle } from '../../hooks'
+import { Preloader } from '../../components'
+import { PageNotFound } from '../Errors'
 
-const Details = () => {
-    useTitle('Ride Details | Carona App')
-    const [carRide, setCarRide] = useState<Ride | null>(null)
+const ReservationDetails = () => {
+    useTitle('Reservation Details | Carona App')
+    const [reservation, setReservation] = useState<ReservationType | null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const { rideId } = useParams()
+    const { reservationId } = useParams()
     const apiPrivate = useApiPrivate()
+    const navigate = useNavigate()
 
     useEffect(() => {
         let isMounted = true
         const controller = new AbortController()
 
-        const getCarRide = async () => {
+        const getReservation = async () => {
             try {
                 setIsLoading(true)
-                const response = await apiPrivate.get(`rides/${rideId}`, {
+                const response = await apiPrivate.get(`rides/reservations/${reservationId}`, {
                     signal: controller.signal
                 })
-                isMounted && setCarRide(response.data)
+                isMounted && setReservation(response.data)
                 setIsLoading(false)
             } catch (_) {
                 setIsLoading(false)
             }
         }
 
-        getCarRide().then()
+        getReservation().then()
 
         return () => {
             isMounted = false
             controller.abort()
         }
-    }, [apiPrivate, rideId])
+    }, [apiPrivate, reservationId])
+
+    const deleteRideReservation = async (id: number) => {
+        return apiPrivate
+            .delete(`rides/reservations/${id}`)
+            .then((_) => {
+                return true
+            })
+            .catch((err) => {
+                return err.response.data
+            })
+    }
+
+    const handleDeleteRideReservation = async (id: number) => {
+        const result = await deleteRideReservation(id)
+
+        if (typeof result === 'object') {
+            const { message } = result
+            toast.error(message)
+            return
+        }
+
+        toast.success('Ride Reservation successfully deleted!')
+        navigate(`/reservations`)
+    }
 
     if (isLoading) {
         return <Preloader />
     }
 
-    if (!carRide) {
+    if (!reservation) {
         return <PageNotFound />
     }
 
@@ -52,14 +78,14 @@ const Details = () => {
                 <div className="container-fluid">
                     <div className="row mb-2">
                         <div className="col-sm-6">
-                            <h1>Rides</h1>
+                            <h1>Reservations</h1>
                         </div>
                         <div className="col-sm-6">
                             <ol className="breadcrumb float-sm-right">
                                 <li className="breadcrumb-item">
                                     <Link to="/">Home</Link>
                                 </li>
-                                <li className="breadcrumb-item active">Ride Details</li>
+                                <li className="breadcrumb-item active">Reservation Details</li>
                             </ol>
                         </div>
                     </div>
@@ -71,7 +97,12 @@ const Details = () => {
                     <div className="col-12">
                         <div className="card">
                             <div className="card-header">
-                                <h3 className="card-title">Ride Details</h3>
+                                <h3 className="card-title">
+                                    Reservation Details{' '}
+                                    <span className="text-bold">
+                                        ({reservation.rideProgram.cityFrom.name} - {reservation.rideProgram.cityTo.name})
+                                    </span>
+                                </h3>
                             </div>
                             <div className="card-body">
                                 <h5 className="mb-4">O preço vai ser divido entre cada ocupante da carona</h5>
@@ -83,9 +114,9 @@ const Details = () => {
                                             </span>
 
                                             <div className="info-box-content">
-                                                <span className="info-box-number h6">{carRide.car.licensePlate}</span>
+                                                <span className="info-box-number h6">{reservation.rideProgram.car.licensePlate}</span>
                                                 <span className="info-box-text">
-                                                    {carRide.car.model} - {carRide.car.color}
+                                                    {reservation.rideProgram.car.model} - {reservation.rideProgram.car.color}
                                                 </span>
                                                 <span className="info-box-text">&nbsp;</span>
                                             </div>
@@ -99,7 +130,7 @@ const Details = () => {
 
                                             <div className="info-box-content">
                                                 <span className="info-box-number h6">
-                                                    {carRide.car.driver.firstName} {carRide.car.driver.lastName}
+                                                    {reservation.rideProgram.car.driver.firstName} {reservation.rideProgram.car.driver.lastName}
                                                 </span>
                                                 <span className="info-box-text">&nbsp;</span>
                                                 <span className="info-box-text">&nbsp;</span>
@@ -114,18 +145,22 @@ const Details = () => {
 
                                             <div className="info-box-content">
                                                 <span className="info-box-number">
-                                                    {carRide.cityFrom.name} - {carRide.cityTo.name}
+                                                    {reservation.rideProgram.cityFrom.name} - {reservation.rideProgram.cityTo.name}
                                                 </span>
                                                 <span className="info-box-text">
-                                                    {carRide.day} - {carRide.departureTime}
+                                                    {reservation.rideProgram.day} - {reservation.rideProgram.departureTime}
                                                 </span>
-                                                <span className="info-box-text">R$ {carRide.price}</span>
+                                                <span className="info-box-text">R$ {reservation.rideProgram.price}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="card-footer"></div>
+                            <div className="card-footer">
+                                <button className="btn btn-danger" onClick={() => handleDeleteRideReservation(reservation.id)}>
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -134,4 +169,4 @@ const Details = () => {
     )
 }
 
-export default Details
+export default ReservationDetails

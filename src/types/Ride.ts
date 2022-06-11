@@ -46,4 +46,5 @@ export type Ride = {
     departureTime: string
     isActive: boolean
     isFull: boolean
+    price: number
 }

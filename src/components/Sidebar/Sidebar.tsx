@@ -2,6 +2,8 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 
 import { AuthContext } from '../../contexts'
+import userImage from '../../assets/images/default-user-image.png'
+import logo from '../../assets/images/logo.png'
 
 const Sidebar = () => {
     const { user } = useContext(AuthContext)
@@ -9,14 +11,14 @@ const Sidebar = () => {
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
             <Link to="/" className="brand-link elevation-4">
-                <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" className="brand-image img-circle elevation-3" style={{ opacity: 0.8 }} />
+                <img src={logo} alt="Carona App" className="brand-image img-circle elevation-3" style={{ opacity: 0.8 }} />
                 <span className="brand-text font-weight-light">Carona App</span>
             </Link>
 
             <div className="sidebar">
                 <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div className="image">
-                        <img src="../../dist/img/user2-160x160.jpg" className="img-circle elevation-2" alt={user?.username} />
+                        <img src={userImage} className="img-circle elevation-2" alt={user?.username} />
                     </div>
                     <div className="info">
                         <Link to="#" className="d-block">
@@ -30,22 +32,22 @@ const Sidebar = () => {
                         <li className="nav-item">
                             <Link to="/" className="nav-link">
                                 <i className="nav-icon fas fa-home"></i>
-
                                 <p>Home</p>
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link to="/rides/create" className="nav-link">
-                                {/*<i className="nav-icon fas fa-home"></i>*/}
+                        {user?.roles.includes('ROLE_DRIVER') && (
+                            <li className="nav-item">
+                                <Link to="/rides/create" className="nav-link">
+                                    <i className="nav-icon fas fa-list"></i>
+                                    <p>Programs</p>
+                                </Link>
+                            </li>
+                        )}
 
-                                <p>Programs</p>
-                            </Link>
-                        </li>
                         <li className="nav-item">
-                            <Link to="/cars/create" className="nav-link">
-                                {/*<i className="nav-icon fas fa-home"></i>*/}
-
-                                <p>Create Car</p>
+                            <Link to="/reservations" className="nav-link">
+                                <i className="nav-icon fas fa-list"></i>
+                                <p>My Reservations</p>
                             </Link>
                         </li>
                     </ul>

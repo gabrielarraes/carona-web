@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import { toast } from 'react-toastify'
 import { yupResolver } from '@hookform/resolvers/yup/dist/yup'
 
-import { Ride } from '../../types'
+import { ApiErrorType, Ride } from '../../types'
 import { City } from '../../types/Ride'
 import { Select, SelectOptionType, TextInput } from '../../components'
 import { useApiPrivate, useTitle } from '../../hooks'
@@ -115,7 +115,6 @@ const Home = () => {
     }
 
     const handleSearchRideProgram = async (searchParams: SearchType): Promise<Ride[] | boolean> => {
-        console.log(searchParams)
         return apiPrivate
             .get('rides/search', { params: searchParams })
             .then((response) => {
@@ -153,6 +152,28 @@ const Home = () => {
         await getAllCarsRides()
     }
 
+    const doReservation = async (program: Ride): Promise<ApiErrorType | boolean> => {
+        return apiPrivate
+            .post('rides/reservations', { rideProgramId: program.id })
+            .then((_) => {
+                return true
+            })
+            .catch((err) => {
+                return err.response.data
+            })
+    }
+
+    const handleReservation = async (program: Ride) => {
+        const result = await doReservation(program)
+        if (typeof result === 'object') {
+            const { message } = result
+            toast.error(message)
+            return
+        }
+
+        toast.success('Ride Reservation successfully reserved!')
+    }
+
     return (
         <>
             <section className="content-header">
@@ -164,7 +185,7 @@ const Home = () => {
                         <div className="col-sm-6">
                             <ol className="breadcrumb float-sm-right">
                                 <li className="breadcrumb-item">
-                                    <Link to="#">Home</Link>
+                                    <Link to="/">Home</Link>
                                 </li>
                                 <li className="breadcrumb-item active">Home</li>
                             </ol>
@@ -231,10 +252,9 @@ const Home = () => {
                                         <tr>
                                             <th style={{ width: '5%' }}>#</th>
                                             <th style={{ width: '5%' }}>Status</th>
-                                            <th style={{ width: '20%' }}>From</th>
-                                            <th style={{ width: '20%' }}>To</th>
-                                            <th style={{ width: '10%' }}>Hour</th>
-                                            <th style={{ width: '15%' }}>Car</th>
+                                            <th style={{ width: '30%' }}>From - To</th>
+                                            <th style={{ width: '15%' }}>Hour</th>
+                                            <th style={{ width: '20%' }}>Car</th>
                                             <th style={{ width: '20%' }}>Driver</th>
                                             <th style={{ width: '5%' }} colSpan={2}>
                                                 Actions
@@ -247,8 +267,13 @@ const Home = () => {
                                                 <tr key={index}>
                                                     <td>{index + 1}</td>
                                                     <td>{ride.isActive ? <span className="badge badge-success">Disponivel</span> : <span className="badge badge-success">Indisponivel</span>}</td>
-                                                    <td>{ride.cityFrom.name}</td>
-                                                    <td>{ride.cityTo.name}</td>
+                                                    <td>
+                                                        <span className="text-bold">
+                                                            {ride.cityFrom.name} - {ride.cityTo.name}
+                                                        </span>
+                                                        <br />
+                                                        {ride.price} R$
+                                                    </td>
                                                     <td>
                                                         <span className="text-bold">
                                                             {ride.day} <br /> {ride.departureTime}
@@ -267,7 +292,9 @@ const Home = () => {
                                                         </button>
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-success">Reservar</button>
+                                                        <button className="btn btn-success" onClick={() => handleReservation(ride)}>
+                                                            Reservar
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))
