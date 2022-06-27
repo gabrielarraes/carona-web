@@ -16,6 +16,8 @@ type RideProgramType = {
     day: string
     departureTime: string
     price: number
+    referencePoint: string
+    destinationPoint: string
 }
 
 const rideProgramSchema = Yup.object({
@@ -23,7 +25,9 @@ const rideProgramSchema = Yup.object({
     cityToId: Yup.number().required(),
     day: Yup.string().required(),
     departureTime: Yup.string().required(),
-    price: Yup.number().required()
+    price: Yup.number().required(),
+    referencePoint: Yup.string().required(),
+    destinationPoint: Yup.string().required(),
 })
 
 const DAYS: SelectOptionType[] = [
@@ -147,7 +151,7 @@ const Create = () => {
 
     const createRideProgram = async (rideProgram: RideProgramType) => {
         const result = await handleCreateRideProgram(rideProgram)
-
+        
         if (typeof result === 'object') {
             const { message } = result
             setHasLoggingError(message)
@@ -314,6 +318,32 @@ const Create = () => {
                                 <div className="row">
                                     <div className="col-md-4">
                                         <div className="form-group mb-3">
+                                            <label htmlFor="departureTime">Reference Point</label>
+                                            <TextInput
+                                                id="referencePoint"
+                                                name={'referencePoint'}
+                                                type={'string'}
+                                                placeholder={'Ex: Em frente mercado Big Box'}
+                                                register={register}                                                
+                                                error={errors.referencePoint && errors.referencePoint.message}
+                                            />
+                                        </div>
+                                    </div>  
+                                    <div className="col-md-4">
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="departureTime">Destination Point</label>
+                                            <TextInput
+                                                id="destinationPoint"
+                                                name={'destinationPoint'}
+                                                type={'string'}
+                                                placeholder={'Ex: IESB - sul'}
+                                                register={register}                                                
+                                                error={errors.destinationPoint && errors.destinationPoint.message}
+                                            />
+                                        </div>
+                                    </div>                           
+                                    <div className="col-md-4">
+                                        <div className="form-group mb-3">
                                             <label htmlFor="departureTime">Price (R$)</label>
                                             <TextInput
                                                 id="price"
@@ -325,8 +355,8 @@ const Create = () => {
                                                 error={errors.price && errors.price.message}
                                             />
                                         </div>
-                                    </div>
-                                </div>
+                                    </div>                                
+                                </div>                        
                                 <div className="row my-3">
                                     <div className="col-md-4"></div>
                                     <div className="col-md-8">
@@ -394,7 +424,7 @@ const Create = () => {
                                                         <td>{ride.isActive ? <span className="badge badge-success">Disponivel</span> : <span className="badge badge-success">Indisponivel</span>}</td>
                                                         <td>
                                                             <span className="text-bold">
-                                                                {ride.cityFrom.name} - {ride.cityTo.name}
+                                                                {ride.cityFrom.name} ({ride.referencePoint}) - {ride.cityTo.name} ({ride.destinationPoint})
                                                             </span>
                                                             <br />
                                                             {ride.price} R$

@@ -101,8 +101,10 @@ const Details = () => {
                                                 <span className="info-box-number h6">
                                                     {carRide.car.driver.firstName} {carRide.car.driver.lastName}
                                                 </span>
-                                                <span className="info-box-text">&nbsp;</span>
-                                                <span className="info-box-text">&nbsp;</span>
+                                                <span className="info-box-text">
+                                                    Phone Number: {carRide.car.driver.phoneNumber}
+                                                </span>                    
+                                                <span className="info-box-text">&nbsp;</span>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -114,7 +116,7 @@ const Details = () => {
 
                                             <div className="info-box-content">
                                                 <span className="info-box-number">
-                                                    {carRide.cityFrom.name} - {carRide.cityTo.name}
+                                                    {carRide.cityFrom.name} ({carRide.referencePoint}) - {carRide.cityTo.name} ({carRide.destinationPoint})
                                                 </span>
                                                 <span className="info-box-text">
                                                     {carRide.day} - {carRide.departureTime}

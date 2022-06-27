@@ -115,8 +115,8 @@ const Reservation = () => {
                                                             <span className="badge badge-success">Indisponivel</span>
                                                         )}
                                                     </td>
-                                                    <td>{reservation.rideProgram.cityFrom.name}</td>
-                                                    <td>{reservation.rideProgram.cityTo.name}</td>
+                                                    <td>{reservation.rideProgram.cityFrom.name} - ({reservation.rideProgram.referencePoint})</td>
+                                                    <td>{reservation.rideProgram.cityTo.name} - ({reservation.rideProgram.destinationPoint})</td>
                                                     <td>
                                                         <span className="text-bold">
                                                             {reservation.rideProgram.day} <br /> {reservation.rideProgram.departureTime}

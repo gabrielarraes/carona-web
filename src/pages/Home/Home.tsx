@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup/dist/yup'
 import { ApiErrorType, Ride } from '../../types'
 import { City } from '../../types/Ride'
 import { Select, SelectOptionType, TextInput } from '../../components'
-import { useApiPrivate, useTitle } from '../../hooks'
+import { useApiPrivate, useAuth, useTitle } from '../../hooks'
 
 type SearchType = {
     from: number
@@ -63,6 +63,7 @@ const Home = () => {
     useTitle('Home | Carona App')
     const [carsRides, setCarsRides] = useState<Ride[]>([])
     const [cities, setCities] = useState<City[]>([])
+    const { user } = useAuth()
     const apiPrivate = useApiPrivate()
     const navigate = useNavigate()
 
@@ -269,7 +270,7 @@ const Home = () => {
                                                     <td>{ride.isActive ? <span className="badge badge-success">Disponivel</span> : <span className="badge badge-success">Indisponivel</span>}</td>
                                                     <td>
                                                         <span className="text-bold">
-                                                            {ride.cityFrom.name} - {ride.cityTo.name}
+                                                            {ride.cityFrom.name} ({ride.referencePoint}) - {ride.cityTo.name} ({ride.destinationPoint})
                                                         </span>
                                                         <br />
                                                         {ride.price} R$
@@ -292,9 +293,11 @@ const Home = () => {
                                                         </button>
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-success" onClick={() => handleReservation(ride)}>
+                                                        {
+                                                        user?.id !== ride.car.driver.id && (<button className="btn btn-success" onClick={() =>              handleReservation(ride)}>
                                                             Reservar
-                                                        </button>
+                                                            </button>)
+                                                        }                                                        
                                                     </td>
                                                 </tr>
                                             ))

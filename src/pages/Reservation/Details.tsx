@@ -43,10 +43,10 @@ const ReservationDetails = () => {
     const deleteRideReservation = async (id: number) => {
         return apiPrivate
             .delete(`rides/reservations/${id}`)
-            .then((_) => {
+            .then((_:any) => {
                 return true
             })
-            .catch((err) => {
+            .catch((err:any) => {
                 return err.response.data
             })
     }
@@ -132,8 +132,10 @@ const ReservationDetails = () => {
                                                 <span className="info-box-number h6">
                                                     {reservation.rideProgram.car.driver.firstName} {reservation.rideProgram.car.driver.lastName}
                                                 </span>
-                                                <span className="info-box-text">&nbsp;</span>
-                                                <span className="info-box-text">&nbsp;</span>
+                                                <span className="info-box-text">
+                                                    Phone Number: {reservation.rideProgram.car.driver.phoneNumber}
+                                                </span>
+                                                <span className="info-box-text">&nbsp;</span>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -145,7 +147,8 @@ const ReservationDetails = () => {
 
                                             <div className="info-box-content">
                                                 <span className="info-box-number">
-                                                    {reservation.rideProgram.cityFrom.name} - {reservation.rideProgram.cityTo.name}
+                                                    {reservation.rideProgram.cityFrom.name} ({reservation.rideProgram.referencePoint}) -  
+                                                    {reservation.rideProgram.cityTo.name} ({reservation.rideProgram.destinationPoint})
                                                 </span>
                                                 <span className="info-box-text">
                                                     {reservation.rideProgram.day} - {reservation.rideProgram.departureTime}

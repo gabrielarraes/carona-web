@@ -47,4 +47,7 @@ export type Ride = {
     isActive: boolean
     isFull: boolean
     price: number
+    referencePoint: string
+    destinationPoint: string
+    date: string
 }
